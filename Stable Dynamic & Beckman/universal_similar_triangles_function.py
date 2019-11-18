@@ -59,15 +59,22 @@ def universal_similar_triangles_function(phi_big_oracle, prox_h, primal_dual_ora
     for it_counter in range(1,max_iter+1):
         inner_iters_num = 1
         while True:
+            ### first line of second step ###
             alpha = 0.5 / L_value + sqrt(0.25 / L_value**2 + A_prev / L_value)
             A = A_prev + alpha
+            ### first line of second step ###
 
+            ### second line of second step ###
             y = (alpha * u_prev + A_prev * t_prev) / A
-            phi_grad_y = phi_big_oracle.grad(y)
-            grad_sum = grad_sum_prev + alpha * phi_grad_y
-            u = prox_h(y_start - grad_sum, A, u_start = u_prev)
+            phi_grad_y = phi_big_oracle.grad(y) # what is it? #
+            grad_sum = grad_sum_prev + alpha * phi_grad_y # what is it? #
+            u = prox_h(y_start - grad_sum, A, u_start = u_prev) # what is it? #
+            # prox_h projects from the point y_start - grad_sum onto a manifold.
+            # y_start - grad_sum because of the shape of phi function (page 7)
+            ### second line of second step ###
             t = (alpha * u + A_prev * t_prev) / A
 
+            ### what is it? ###
             if it_counter == 1 and inner_iters_num == 1:
                 flows_weighted = - grad_sum / A
                 duality_gap_init = primal_dual_oracle.duality_gap(t, flows_weighted)
@@ -78,7 +85,9 @@ def universal_similar_triangles_function(phi_big_oracle, prox_h, primal_dual_ora
                     print('Primal_init = {:g}'.format(primal_dual_oracle.primal_func_value(flows_weighted)))
                     print('Dual_init = {:g}'.format(primal_dual_oracle.dual_func_value(t)))
                     print('Duality_gap_init = {:g}'.format(duality_gap_init))
+            ### what is it? ###
 
+            ### condition to verify ###
             left_value = (phi_big_oracle.func(y) + np.dot(phi_grad_y, t - y) + 
                           0.5 * alpha / A * eps_abs) - phi_big_oracle.func(t)
             right_value = - 0.5 * L_value * np.sum((t - y)**2)
@@ -87,6 +96,7 @@ def universal_similar_triangles_function(phi_big_oracle, prox_h, primal_dual_ora
             else:
                 L_value *= 2
                 inner_iters_num += 1
+            ### condition to verify ###
 
                     
         A_prev = A
@@ -97,9 +107,11 @@ def universal_similar_triangles_function(phi_big_oracle, prox_h, primal_dual_ora
         grad_sum_prev = grad_sum
         flows_weighted = - grad_sum / A
         
+        ### what is it? ###
         primal_func_value = primal_dual_oracle.primal_func_value(flows_weighted)
         dual_func_value = primal_dual_oracle.dual_func_value(t)
         duality_gap = primal_dual_oracle.duality_gap(t, flows_weighted)
+        ### what is it? ###
         
         primal_func_history.append(primal_func_value)
         dual_func_history.append(dual_func_value)
