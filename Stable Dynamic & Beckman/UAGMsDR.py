@@ -101,6 +101,6 @@ def UAGMsDR(phi_big_oracle, prox_h, x_start, eps=1e-5):
         ### 7 ###
 
 
-f = lambda x: (0.8-x)**2
+# f = lambda x: (0.8-x)**2
 
-print(ternarySearch(f, 0, float('Inf'), 0.0001))
+# print(ternarySearch(f, 0, float('Inf'), 0.0001))
