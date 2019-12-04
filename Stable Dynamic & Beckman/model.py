@@ -11,6 +11,8 @@ import universal_gradient_descent as ugd
 
 import frank_wolfe_algorithm as fwa
 
+import UAGMsDR_Dima as uagmsdr
+
 
 class Model:
     def __init__(self, graph_data, graph_correspondences, total_od_flow, mu = 0.25, rho = 0.15):
@@ -37,10 +39,13 @@ class Model:
         elif solver_name == 'sd':
             solver_func = ugd.universal_gradient_descent_function
             starting_msg = 'Subgradient descent...'
+        elif solver_name == 'uagmsdr':
+            solver_func = uagmsdr.UAGMsDR
+            starting_msg = 'Universal Accelerated Gradient Method with Small-Dimensional Relaxation...'
         else:
             raise NotImplementedError('Unknown solver!')
 
-        if solver_name in ['ugd', 'ustf', 'sd']:
+        if solver_name in ['ugd', 'ustf', 'sd', 'uagmsdr']:
             prox_h = ProxH(self.graph.freeflow_times, self.graph.capacities, mu = self.mu, rho = self.rho)
 
 

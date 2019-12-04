@@ -44,7 +44,7 @@ class TransportGraph:
         self.pred_to_edge = [{}] * self.nodes_number
         for node_index in range(self.nodes_number):
             self.pred_to_edge[node_index] = {source: edge_index 
-                                             for source, _, edge_index in self.in_edges(node_index)}
+                                             for source, edge_index in self.in_edges(node_index)}
        
     def get_graphtool(self):
         return self.graph
