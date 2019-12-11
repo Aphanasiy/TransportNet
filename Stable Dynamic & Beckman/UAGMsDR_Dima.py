@@ -1,12 +1,13 @@
 import numpy as np
 from numpy.linalg import norm
 from math import sqrt
+# from scipy.optimize import fmin
 
 
-def ternarySearch(f, l, r, eps):
+def ternarySearch(f_plus_h, l, r, eps, f):
     """
     If r == inf, minumum shouldn't be at point l.
-    :param f: a function
+    :param f_plus_h: a function
     :param l: left point, must be a non-negative number 
     :param r: right point, must be a non-negative number, could be inf
     :param eps: precision
@@ -23,10 +24,10 @@ def ternarySearch(f, l, r, eps):
 #             print(l, r, ', f ', f(l), f(r))
 #         r = 2*r
     while r - l > eps:
-        print(l, r, '| f ', f(l), f(r))
+        print(l, r, '| f_plus_h(l) f_plus_h(r) h(l) h(r) ', f_plus_h(l), f_plus_h(r), f_plus_h(l)-f(l), f_plus_h(r)-f(r))
         m1 = l + (r - l) / 3
         m2 = r - (r - l) / 3
-        if f(m1) < f(m2):
+        if f_plus_h(m1) < f_plus_h(m2):
             r = m2
         else:
             l = m1
@@ -52,7 +53,7 @@ def quadratic_equation_solution(phi_big_oracle, x, y, A, eps):
     # need to specify * norm
     f = phi_big_oracle.func
     g = phi_big_oracle.grad
-
+    
     a = norm(g(y))**2
     b = 2*f(x)-2*f(y)-eps
     c = 2*A*(f(x)-f(y))
@@ -98,13 +99,14 @@ def UAGMsDR(phi_big_oracle, prox_h, primal_dual_oracle,
     iter_step = 10
 
     ### 0 ###
+    f_plus_h = primal_dual_oracle.dual_func_value
     f = phi_big_oracle.func
     g = phi_big_oracle.grad
-
-    print(phi_big_oracle.func)
-    for i in range(20):
-        print(i, phi_big_oracle.func(i*t_start))
-
+    
+#     print(phi_big_oracle.func)
+#     for i in range(20):
+#         print(i, phi_big_oracle.func(i*t_start))
+        
     grad_sum = np.zeros(len(t_start))
     # y_start = v_prev = np.copy(x_start)
     ### 0 ###
@@ -124,18 +126,19 @@ def UAGMsDR(phi_big_oracle, prox_h, primal_dual_oracle,
         ### 2, 8, 9 ###
 
         ### 3 ###
-        beta = ternarySearch(lambda b: f(v + b * (x - v)), 0, 1, eps)
+        beta = ternarySearch(lambda b: f_plus_h(v + b * (x - v)), 0, 1, eps, lambda b: f(v + b * (x - v)))
+        # beta = fmin(lambda b: f(v + b * (x - v)), x0=0.5, xtol=eps)
         y = v + beta * (x - v)
         ### 3 ###
 
         ### 4 ###
         f_grad_y = g(y)
         f_y_hashtag = f_grad_y/norm(f_grad_y)
-        h = ternarySearch(lambda h: f(y - h * f_y_hashtag),
-                          0, float('Inf'), eps)
+        h = ternarySearch(lambda h: f_plus_h(y - h * f_y_hashtag),
+                          0, float('Inf'), eps, lambda h: f(y - h * f_y_hashtag))
+        # h = fmin(lambda h: f(y - h * f_y_hashtag), x0=1, xtol=eps)
         x = y - h * f_y_hashtag
-        a = quadratic_equation_solution(
-            phi_big_oracle, x, y, A, eps)  # quadratic equation
+        a = quadratic_equation_solution(phi_big_oracle, x, y, A, eps)  # quadratic equation
         ### 4 ###
 
         ### 5 ###
@@ -226,3 +229,4 @@ def UAGMsDR(phi_big_oracle, prox_h, primal_dual_oracle,
         # print('Inner iterations total number: ' + str(sum(inner_iters_history)))
 
     return result
+
