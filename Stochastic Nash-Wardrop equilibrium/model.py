@@ -19,7 +19,7 @@ def model_solve(graph, graph_correspondences, total_od_flow,
                 gamma = 1.0, mu = 0.25, rho = 1.0, 
                 epsilon = 1e-3, max_iter = 1000, verbose = False):
     if solver_name == 'ustf':
-        solver_func = ustf.universal_similar_triangles_function
+        solver_func = ustf.universal_similar_triangles_function_with_torch
         phi_small_solver_func = pss.PhiSmallSolver
         starting_msg = 'Universal similar triangles function...'
     elif solver_name == 'ugd':
