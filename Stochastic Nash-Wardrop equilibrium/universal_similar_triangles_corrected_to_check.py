@@ -273,7 +273,7 @@ def universal_similar_triangles_function_with_torch(
                 print('Success! Iterations number: ' + str(counter + 1))
                 print('Primal_func_value = ' + str(primal_func_value))
                 print('Duality_gap / Duality_gap_init = ' + str(duality_gap / duality_gap_init))
-                print('Phi big oracle elapsed time: {:.0f} sec'.format(phi_big_oracle.time))
+                print('Phi big oracle elapsed time: {:.0f} sec'.format(phi_big_oracle.time)) 
                 
             return result  
 
