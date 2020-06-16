@@ -62,6 +62,8 @@ class AutomaticOracle(BaseOracle):
         self.graph = graph
         self.source_index = source - 1
 
+        print(type(self.graph, self.source))
+
         self.corr_targets = np.array(list(source_correspondences.keys()), dtype = 'int64') - 1
         self.corr_values = np.array(list(source_correspondences.values()))
         
@@ -83,6 +85,39 @@ class AutomaticOracle(BaseOracle):
     
     def update_shortest_paths(self, t_parameter):
         self.distances, self.pred_map = self.graph.shortest_distances(self.source_index, self.corr_targets, t_parameter)
+
+
+class AutomaticTorchOracle(BaseOracle):
+    """
+    Oracle for automatic calculations of function kGamma * \Psi (t)
+    kGamma -> +0, implemented with pytorch
+    """
+    def __init__(self, source, graph, source_correspondences):
+        self.graph = graph
+        self.source_index = source - 1
+
+        self.corr_targets = torch.LongTensor(list(source_correspondences.keys())) - 1
+        self.corr_values = torch.LongTensor(list(source_correspondences.values()))
+        
+        self.flows = None
+        self.distances = None
+
+    def func(self, t_parameter):
+        self.update_shortest_paths(t_parameter)
+        return - torch.dot(self.distances, self.corr_values) 
+
+    #correct answer if func calculated flows!
+    def grad(self, t_parameter):
+        sorted_vertices = get_tree_order(self.graph.nodes_number, self.corr_targets, self.pred_map)
+        pred_edges = [self.graph.pred_to_edge[vertex][self.pred_map[vertex]] for vertex in sorted_vertices]
+        flows = get_flows(self.graph.nodes_number, self.graph.links_number, 
+                          self.corr_targets, self.corr_values, self.pred_map, pred_edges, sorted_vertices)
+        return - torch.from_numpy(flows)
+        
+    
+    def update_shortest_paths(self, t_parameter):
+        self.distances, self.pred_map = self.graph.shortest_distances(self.source_index, self.corr_targets, t_parameter)
+
 
 
 class PhiBigOracle(BaseOracle):
