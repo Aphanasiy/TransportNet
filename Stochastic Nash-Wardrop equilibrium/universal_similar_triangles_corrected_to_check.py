@@ -235,8 +235,6 @@ def universal_similar_triangles_function_with_torch(
             phi_small_solver.undo_update(alpha.numpy(), phi_grad_y_parameter.numpy()) # To numpy
             print('iteration_num = ' + str(counter + 1) + ': L_value = ' + str(float(L_value)))
             inner_iters_num += 1
-        print("=== === === === === === === ===")
-
                     
         A_previous = A_current.clone()
         L_value.div_(2)

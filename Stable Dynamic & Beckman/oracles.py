@@ -62,8 +62,6 @@ class AutomaticOracle(BaseOracle):
         self.graph = graph
         self.source_index = source - 1
 
-        print(type(self.graph, self.source))
-
         self.corr_targets = np.array(list(source_correspondences.keys()), dtype = 'int64') - 1
         self.corr_values = np.array(list(source_correspondences.values()))
         
