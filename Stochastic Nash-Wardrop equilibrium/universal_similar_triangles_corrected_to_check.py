@@ -168,7 +168,6 @@ def universal_similar_triangles_function_with_torch(
     for counter in range(max_iter):
         inner_iters_num = 1
         while True:
-            print("A")
             alpha = torch.add(
                         torch.div(torch.FloatTensor([0.5]), L_value),
                         torch.sqrt( torch.add(
@@ -179,7 +178,6 @@ def universal_similar_triangles_function_with_torch(
                                 A_previous, 
                                 L_value))))
             A_current = torch.add(A_previous, alpha)
-            print("B")
             y_parameter = torch.div(
                             torch.add(
                               torch.mul(alpha, u_previous), 
@@ -187,14 +185,12 @@ def universal_similar_triangles_function_with_torch(
                             A_current)
             phi_grad_y_parameter = torch.from_numpy(phi_big_oracle.grad(y_parameter.numpy())) # To numpy converting
             phi_small_solver.update(alpha.numpy(), phi_grad_y_parameter.numpy()) # To numpy converting
-            print("C")
             u_parameter = torch.from_numpy(phi_small_solver.argmin_function(u_start = u_previous.numpy())) # To numpy   # Correct returning num?
             t_parameter = torch.div(
                             torch.add(
                               torch.mul(alpha, u_parameter),
                               torch.mul(A_previous, t_previous) ),
                             A_current)
-            print("D")
             flows_weighted = torch.div(
                                 torch.sub(
                                   torch.mul(A_previous, flows_weighted_previous), 
@@ -205,7 +201,6 @@ def universal_similar_triangles_function_with_torch(
                                     torch.mul(A_previous, entropy_weighted),
                                     torch.mul(alpha, phi_big_oracle.entropy(y_parameter.numpy()))), #To numpy
                                   A_current)
-            print("E")
             if counter == 0 and inner_iters_num == 1:
                 primal_func_value = torch.sub(
                     primal_dual_oracle.sigma_sum_func(flows_weighted),
@@ -235,11 +230,12 @@ def universal_similar_triangles_function_with_torch(
                                 torch.sum(torch.square(torch.sub(t_parameter, y_parameter))))
             if (left_value >= right_value):
                 break
-            else:
-                L_value.mul_(2) #inline
-                phi_small_solver.undo_update(alpha.numpy(), phi_grad_y_parameter.numpy()) # To numpy
-                print('iteration_num = ' + str(counter + 1) + ': L_value = ' + str(float(L_value)))
-                inner_iters_num += 1
+            
+            L_value.mul_(2) #inline
+            phi_small_solver.undo_update(alpha.numpy(), phi_grad_y_parameter.numpy()) # To numpy
+            print('iteration_num = ' + str(counter + 1) + ': L_value = ' + str(float(L_value)))
+            inner_iters_num += 1
+        print("=== === === === === === === ===")
 
                     
         A_previous = A_current.clone()
