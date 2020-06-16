@@ -208,9 +208,9 @@ def universal_similar_triangles_function_with_torch(
                 dual_func_value = primal_dual_oracle.dual_func_value(t_parameter.numpy()) # To numpy
                 duality_gap_init = torch.add(primal_func_value, dual_func_value)
                 
-                print('primal_init = ' + str(float(primal_func_value)))
-                print('dual_init = ' + str(float(dual_func_value)))
-                print('duality_gap_init = ' + str(float(duality_gap_init)))
+                print(' > primal_init = ' + str(float(primal_func_value)))
+                print(' > dual_init = ' + str(float(dual_func_value)))
+                print(' > duality_gap_init = ' + str(float(duality_gap_init)))
                 epsilon_absolute = torch.mul(epsilon, duality_gap_init)
             left_value = torch.sub(
                           torch.add(torch.add(
@@ -264,19 +264,19 @@ def universal_similar_triangles_function_with_torch(
                       'inner_iters_history': inner_iters_history,
                       'primal_func_history': primal_func_history}
             if verbose:
-                print('Success! Iterations number: ' + str(counter + 1))
-                print('Primal_func_value = ' + str(primal_func_value))
-                print('Duality_gap / Duality_gap_init = ' + str(duality_gap / duality_gap_init))
-                print('Phi big oracle elapsed time: {:.0f} sec'.format(phi_big_oracle.time)) 
+                print(' | Success! Iterations number: ' + str(counter + 1))
+                print(' | Primal_func_value = ' + str(primal_func_value))
+                print(' | Duality_gap / Duality_gap_init = ' + str(duality_gap / duality_gap_init))
+                print(' | Phi big oracle elapsed time: {:.0f} sec'.format(phi_big_oracle.time)) 
                 
             return result  
 
         
         if verbose and ((counter + 1) % iter_step == 0 or counter == 0):
-            print('Iterations number: ' + str(counter + 1))
-            print('Dual_gap_value = ' + str(duality_gap))
-            print('Primal_func_value = ' + str(primal_func_value))
-            print('Duality_gap / Duality_gap_init = ' + str(duality_gap / duality_gap_init))
+            print(' - Iterations number: ' + str(counter + 1))
+            print(' - Dual_gap_value = ' + str(duality_gap))
+            print(' - Primal_func_value = ' + str(primal_func_value))
+            print(' - Duality_gap / Duality_gap_init = ' + str(duality_gap / duality_gap_init))
             #print('Duality_gap = ' + str(duality_gap))
             
     result = {'times': t_parameter,
@@ -288,6 +288,6 @@ def universal_similar_triangles_function_with_torch(
               'primal_func_history': primal_func_history}
     
     if verbose:
-        print('Primal_func_value = ' + str(primal_func_value))
-        print('Iterations number exceeded!')
+        print(' - Primal_func_value = ' + str(primal_func_value))
+        print(' | Iterations number exceeded!')
     return result
